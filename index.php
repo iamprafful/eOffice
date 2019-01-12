@@ -1,14 +1,5 @@
 <?php
 include('php/config.php');
-$con = mysqli_connect($servername,$username,$password,$dbname);
-if(!$con)
-//echo "connection failed";
-else
-//echo "connection done to mysql";
-//mysqli_select_db($con,'phq');
-$q="select user_name, user_id from user";
-$result=mysqli_query($con,$q);
-$num=mysqli_num_rows($result);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -62,16 +53,21 @@ $num=mysqli_num_rows($result);
                 <select name="userid" id="single" class="form-control select2" data-ui-jp="select2" data-ui-options="{theme: 'bootstrap'}">
                   <option value="-1">Select Username</option>
                   <?php
+                  $con = mysqli_connect($servername,$username,$password,$dbname);
+                  if (!$conn) {
+                      die("Connection failed: " . mysqli_connect_error());
+                  }
+                  $q="select user_name, user_id from user order by user_name";
+                  $result=mysqli_query($con,$q);
+                  $num=mysqli_num_rows($result);
                   if($num)
                   {
-                  for ($i=1; $i <=$num ; $i++) {
-                  $row=mysqli_fetch_array($result);
-
-                  echo '<option value="'.$row['user_id'].'">'.$row['user_name'].'</option>';
-                  }
+                    for ($i=1; $i <=$num ; $i++) {
+                      $row=mysqli_fetch_array($result);
+                      echo '<option value="'.$row['user_id'].'">'.$row['user_name'].'</option>';
+                    }
                   }
                   ?>
-
                 </select>
               </div>
               <div class="form-group">
