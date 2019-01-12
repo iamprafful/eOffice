@@ -54,7 +54,7 @@ include('php/config.php');
                   <option value="-1">Select Username</option>
                   <?php
                   $con = mysqli_connect($servername,$username,$password,$dbname);
-                  if (!$conn) {
+                  if (!$con) {
                       die("Connection failed: " . mysqli_connect_error());
                   }
                   $q="select user_name, user_id from user order by user_name";
@@ -67,6 +67,7 @@ include('php/config.php');
                       echo '<option value="'.$row['user_id'].'">'.$row['user_name'].'</option>';
                     }
                   }
+                  mysqli_close($con);
                   ?>
                 </select>
               </div>
