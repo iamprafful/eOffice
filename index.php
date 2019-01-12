@@ -1,5 +1,14 @@
 <?php
 include('php/config.php');
+session_start();
+if (isset($_SESSION["logged_in"])) {
+  if ($_SESSION["privilage"]=="1") {
+    header('location: admin.php');
+  }
+  else if ($_SESSION["privilage"]=="0"){
+    header('location: dashboard.php');
+  }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
