@@ -11,7 +11,7 @@ include("../php/config.php");
           $response['message']="Connection Failed";
           die(json_encode($response));
         }
-        $get_city='Select user_id, user_name, mobile, supervisor, role from user where privilage="0" order by user_id';
+        $get_city='Select p.user_id, p.user_name, p.mobile, (select n.user_name from user n where n.user_id=p.supervisor limit 1) as "supervisor", role from user p where p.privilage="0" order by p.user_id';
         $result = $conn->query($get_city);
         if ($result->num_rows > 0) {
             // output data of each row

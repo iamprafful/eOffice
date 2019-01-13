@@ -56,7 +56,7 @@ if (isset($_SESSION["logged_in"])) {
       <div class="b-t">
         <div class="center-block w-xxl w-auto-xs p-y-md">
           <div class="p-a-md">
-            <form name="form" action="php/verify.php" method="post">
+            <form name="form" action="php/auth.php" method="post">
               <div class="form-group">
                 <label for="single">Username</label>
                 <select name="userid" id="single" class="form-control select2" data-ui-jp="select2" data-ui-options="{theme: 'bootstrap'}">

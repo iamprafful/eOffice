@@ -14,7 +14,7 @@ $nav='<nav class="scroll nav-stacked nav-stacked-rounded nav-color">
       </a>
     </li>
     <li>
-      <a href="app.project.html" class="b-default">
+      <a href="new_user.php" class="b-default">
         <span class="nav-icon text-white no-fade">
           <i class="ion-person"></i>
         </span>
@@ -22,7 +22,7 @@ $nav='<nav class="scroll nav-stacked nav-stacked-rounded nav-color">
       </a>
     </li>
     <li>
-      <a href="app.project.html" class="b-default">
+      <a href="settings.php" class="b-default">
         <span class="nav-icon text-white no-fade">
           <i class="fa fa-gear text-muted"></i>
         </span>

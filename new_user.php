@@ -137,42 +137,97 @@ if ($_SESSION["logged_in"]!="true" && $_SESSION["privilage"]!="1") {
     <div class="app-body">
 
 <!-- ############ PAGE START-->
+<script type="text/javascript">
+function select_check(val){
+ var element=document.getElementById('other_value_role');
+ if(val=='other')
+   element.style.display='block';
+ else
+   element.style.display='none';
+}
+
+</script>
 <div class="padding">
-  <div class="box">
-    <div class="box-header">
-      <h2>Users</h2>
-    </div>
-    <div class="table-responsive" id="datatable">
-      <table data-ui-jp="dataTable" data-ui-options="{
-          sAjaxSource: 'api/users.php',
-          lengthChange: false,
-          buttons: [ 'copy', 'excel', 'pdf', 'colvis' ],
-          aoColumns: [
-            { mData: 'user_id' },
-            { mData: 'user_name' },
-            { mData: 'mobile' },
-            { mData: 'supervisor' },
-            { mData: 'role' }
-          ],
-          'initComplete': function () {
-            this.api().buttons().container()
-              .appendTo( '#datatable .col-md-6:eq(0)' );
-          }
-        }" class="table table-striped b-t b-b">
-        <thead>
-          <tr>
-            <th  style="width:10%">ID</th>
-            <th  style="width:35%">Username</th>
-            <th  style="width:25%">Mobile</th>
-            <th  style="width:15%">Supervisor</th>
-            <th  style="width:15%">Role</th>
-          </tr>
-        </thead>
-        <tbody>
-        </tbody>
-      </table>
-    </div>
-  </div>
+  <div class="row"></div>
+  <form method="post" action="php/register_user.php">
+        <div class="box">
+          <div class="box-header">
+            <h2>Register User</h2>
+          </div>
+          <div class="box-body">
+            <p class="text-muted">Please fill the information to continue</p>
+            <div class="form-group">
+              <label>User's Name</label>
+              <input type="text" class="form-control" required name="user_name">
+            </div>
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" class="form-control" required name="email">
+            </div>
+            <div class="form-group">
+              <label>Phone Number</label>
+              <input type="tel" pattern="[0-9]{10}" class="form-control" placeholder="XXX XXXX XXX" maxlength="10" required name="phone">
+            </div>
+            <div class="form-group">
+              <label>Supervisor</label>
+              <select name="supervisor" class="form-control select2" data-ui-jp="select2" data-ui-options="{theme: 'bootstrap'}" >
+                <option value="-1">Select Supervisor</option>
+                <?php
+                $conn = mysqli_connect($servername,$username,$password,$dbname);
+                if (!$conn) {
+                    die("Connection failed: " . mysqli_connect_error());
+                }
+                $sql='select user_name, user_id from user where privilage="0" order by user_name';
+                $result = mysqli_query($conn, $sql);
+
+                if (mysqli_num_rows($result) > 0) {
+                  // output data of each row
+                  while($row = mysqli_fetch_assoc($result)) {
+                    echo '<option value="'.$row['user_id'].'">'.$row['user_name'].'</option>';
+                  }
+                } else {
+
+                }
+                ?>
+                <option value="none">None</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Role</label>
+              <select name="role"  class="form-control select2" data-ui-jp="select2" data-ui-options="{theme: 'bootstrap'}" onchange="select_check(this.value);">
+                <option value="-1">Select Role</option>
+                <?php
+                $sql='select distinct role from user where privilage="0" order by role';
+                $result = mysqli_query($conn, $sql);
+
+                if (mysqli_num_rows($result) > 0) {
+                  // output data of each row
+                  while($row = mysqli_fetch_assoc($result)) {
+                    echo '<option value="'.$row['role'].'">'.$row['role'].'</option>';
+                  }
+                } else {
+
+                }
+
+                mysqli_close($conn);
+                ?>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <input type="text" class="form-control" name="other_value_role" id="other_value_role" style='display:none;' placeholder="Enter new role">
+            </div>
+            <div class="form-group">
+              <label>Create Password</label>
+              <input type="password" class="form-control" required maxlength="32" required name="password">
+            </div>
+          </div>
+          <div class=" p-a text-right">
+            <button type="reset" class="btn default">Clear</button>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
+        </div>
+      </form>
 </div>
 <!-- ############ PAGE END-->
 
@@ -188,7 +243,7 @@ if ($_SESSION["logged_in"]!="true" && $_SESSION["privilage"]!="1") {
           <i class="fa fa-gear text-muted"></i>
         </a>
         <div class="box-header">
-          
+
           <strong>Theme Switcher</strong>
         </div>
         <div class="box-divider"></div>
