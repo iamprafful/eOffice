@@ -13,7 +13,7 @@ else {
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>File Tracking System | New File</title>
+  <title>File Tracking System | New Notesheet</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimal-ui" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
@@ -75,7 +75,7 @@ else {
                 <a data-toggle="modal" data-target="#aside" class="navbar-item pull-left hidden-lg-up p-r m-a-0">
                   <i class="ion-navicon"></i>
                 </a>
-                <div class="navbar-item pull-left h5" id="pageTitle">New File</div>
+                <div class="navbar-item pull-left h5" id="pageTitle">New Notesheet</div>
                 <!-- nabar right -->
                 <ul class="nav navbar-nav pull-right">
                   <li class="nav-item dropdown pos-stc-xs">
@@ -151,149 +151,27 @@ function select_check(val, input_name){
 </script>
 <div class="padding">
   <div class="row"></div>
-  <form method="post">
+  <form method="post" action="php/save_notesheet.php">
         <div class="box">
           <div class="box-header">
-            <h2>Register File</h2>
+            <h2>Register Notesheet</h2>
           </div>
           <div class="box-body">
             <p class="text-muted">Please fill the information to continue</p>
             <div class="row">
-              <div class="col-sm-3">
+              <div class="col-sm-6">
                 <div class="form-group">
-                  <label>File Type</label>
-                  <select name="role"  class="form-control select2" data-ui-jp="select2" data-ui-options="{theme: 'bootstrap'}" onchange="select_check(this.value, 'other_value_type');">
-                    <option value="-1">Select Type</option>
-                    <?php
-                    $conn = mysqli_connect($servername,$username,$password,$dbname);
-                    if (!$conn) {
-                        die("Connection failed: " . mysqli_connect_error());
-                    }
-                    $sql='select distinct file_type from files order by file_type';
-                    $result = mysqli_query($conn, $sql);
-                    if (mysqli_num_rows($result) > 0) {
-                      // output data of each row
-                      while($row = mysqli_fetch_assoc($result)) {
-                        echo '<option value="'.$row['file_type'].'">'.$row['file_type'].'</option>';
-                      }
-                    } else {
-
-                    }
-                    ?>
-                    <option value="other">Other</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <input type="text" class="form-control" name="other_value_type" id="other_value_type" style='display:none;' placeholder="Enter new type">
+                  <label>Notesheet Number</label>
+                  <input type="text" class="form-control" required name="notesheet_no">
                 </div>
               </div>
-              <div class="col-sm-3">
-                <div class="form-group">
-                  <label>File Number</label>
-                  <input type="text" class="form-control" required name="file_no">
-                </div>
-              </div>
-              <div class="col-sm-3">
-                <div class="form-group">
-                  <label>Sender</label>
-                  <select name="sender"  class="form-control select2" data-ui-jp="select2" data-ui-options="{theme: 'bootstrap'}" onchange="select_check(this.value, 'other_value_sender');">
-                    <option value="-1">Select Sender</option>
-                    <?php
-                    $sql='select distinct sender from files order by sender';
-                    $result = mysqli_query($conn, $sql);
-                    if (mysqli_num_rows($result) > 0) {
-                      // output data of each row
-                      while($row = mysqli_fetch_assoc($result)) {
-                        echo '<option value="'.$row['sender'].'">'.$row['sender'].'</option>';
-                      }
-                    } else {
-
-                    }
-                    ?>
-                    <option value="other">Other</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <input type="text" class="form-control" name="other_value_sender" id="other_value_sender" style='display:none;' placeholder="Enter new sender">
-                </div>
-              </div>
-              <div class="col-sm-3">
-                <div class="form-group">
-                  <label>Letter Number</label>
-                  <input type="text" class="form-control" required name="letter_no">
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-sm-4">
-                <div class="form-group">
-                  <label>DGP Office Number</label>
-                  <input type="text" class="form-control" required name="dgp_no">
-                </div>
-              </div>
-              <div class="col-sm-4">
-                <div class="form-group">
-                  <label>Letter Date</label>
-                  <div class="input-group date" data-ui-jp="datetimepicker" data-ui-options="{
-                    format: 'DD/MM/YYYY',
-                    icons: {
-                      time: 'fa fa-clock-o',
-                      date: 'fa fa-calendar',
-                      up: 'fa fa-chevron-up',
-                      down: 'fa fa-chevron-down',
-                      previous: 'fa fa-chevron-left',
-                      next: 'fa fa-chevron-right',
-                      today: 'fa fa-screenshot',
-                      clear: 'fa fa-trash',
-                      close: 'fa fa-remove'
-                    }
-                  }">
-                  <input type="text" class="form-control has-value" required name="date">
-                  <span class="input-group-addon">
-                      <span class="fa fa-calendar"></span>
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <div class="col-sm-4">
+              <div class="col-sm-6">
                 <div class="form-group">
                   <label>Subject</label>
                   <select name="subject"  class="form-control select2" data-ui-jp="select2" data-ui-options="{theme: 'bootstrap'}" onchange="select_check(this.value, 'other_value_subject');">
                     <option value="-1">Select Subject</option>
                     <?php
-                    $sql='select distinct subject from files order by file_type';
-                    $result = mysqli_query($conn, $sql);
-                    if (mysqli_num_rows($result) > 0) {
-                      // output data of each row
-                      while($row = mysqli_fetch_assoc($result)) {
-                        echo '<option value="'.$row['file_type'].'">'.$row['file_type'].'</option>';
-                      }
-                    } else {
-
-                    }
-                    ?>
-                    <option value="other">Other</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <input type="text" class="form-control" name="other_value_subject" id="other_value_subject" style='display:none;' placeholder="Enter new subject">
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-sm-8">
-                <div class="form-group">
-                  <label>Description</label>
-                  <input type="text" class="form-control" required name="Description" placeholder="Description here">
-                </div>
-              </div>
-              <div class="col-sm-4">
-                <div class="form-group">
-                  <label>Add Notesheet</label>
-                  <select name="notsheet"  class="form-control select2" data-ui-jp="select2" data-ui-options="{theme: 'bootstrap'}" onchange="select_check(this.value, 'other_value_subject');">
-                    <option value="-1">Select Notesheet</option>
-                    <?php
-                    $sql='select distinct subject from files order by subject';
+                    $sql='select distinct subject from notesheet order by subject';
                     $result = mysqli_query($conn, $sql);
                     if (mysqli_num_rows($result) > 0) {
                       // output data of each row
@@ -304,47 +182,11 @@ function select_check(val, input_name){
 
                     }
                     ?>
+                    <option value="other">Other</option>
                   </select>
                 </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-sm-6">
                 <div class="form-group">
-                  <label>Send for action</label>
-                  <select name="send_action" class="form-control select2-multiple" multiple data-ui-jp="select2" data-ui-options="{theme: 'bootstrap'}">
-                    <?php
-                    $sql='select user_id, user_name from user where privilage=0 order by user_name';
-                    $result = mysqli_query($conn, $sql);
-                    if (mysqli_num_rows($result) > 0) {
-                      // output data of each row
-                      while($row = mysqli_fetch_assoc($result)) {
-                        echo '<option value="'.$row['user_id'].'">'.$row['user_name'].'</option>';
-                      }
-                    } else {
-
-                    }
-                    ?>
-                  </select>
-                </div>
-              </div>
-              <div class="col-sm-6">
-                <div class="form-group">
-                  <label>Send for information</label>
-                  <select name="send_information" class="form-control select2-multiple" multiple data-ui-jp="select2" data-ui-options="{theme: 'bootstrap'}">
-                    <?php
-                    $sql='select user_id, user_name from user where privilage=0 order by user_name';
-                    $result = mysqli_query($conn, $sql);
-                    if (mysqli_num_rows($result) > 0) {
-                      // output data of each row
-                      while($row = mysqli_fetch_assoc($result)) {
-                        echo '<option value="'.$row['user_id'].'">'.$row['user_name'].'</option>';
-                      }
-                    } else {
-
-                    }
-                    ?>
-                  </select>
+                  <input type="text" class="form-control" name="other_value_subject" id="other_value_subject" style='display:none;' placeholder="Enter new subject">
                 </div>
               </div>
             </div>
@@ -368,8 +210,7 @@ function select_check(val, input_name){
           </div>
           <div class=" p-a text-right">
             <input type="reset" class="btn default" value="Clear">
-            <input type="submit" class="btn default" value="Save Draft" formaction="php/save_draft.php">
-            <input type="submit" class="btn btn-primary" value="Send" formaction="php/send_file.php">
+            <input type="submit" class="btn btn-primary" value="Save Notesheet">
           </div>
         </div>
       </form>
