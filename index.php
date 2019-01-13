@@ -6,7 +6,7 @@ if (isset($_SESSION["logged_in"])) {
     header('location: admin.php');
   }
   else if ($_SESSION["privilage"]=="0"){
-    header('location: dashboard.php');
+    header('location: inbox.php');
   }
 }
 ?>

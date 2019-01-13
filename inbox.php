@@ -13,7 +13,7 @@ else {
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>File Tracking System | Dashboard</title>
+  <title>File Tracking System | Inbox</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimal-ui" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
@@ -75,7 +75,7 @@ else {
                 <a data-toggle="modal" data-target="#aside" class="navbar-item pull-left hidden-lg-up p-r m-a-0">
                   <i class="ion-navicon"></i>
                 </a>
-                <div class="navbar-item pull-left h5" id="pageTitle">Dashboard</div>
+                <div class="navbar-item pull-left h5" id="pageTitle">Inbox</div>
                 <!-- nabar right -->
                 <ul class="nav navbar-nav pull-right">
                   <li class="nav-item dropdown pos-stc-xs">
@@ -147,6 +147,7 @@ else {
     <div class="table-responsive" id="datatable">
       <table data-ui-jp="dataTable" data-ui-options="{
           sAjaxSource: 'api/users.php',
+          paging: false,
           lengthChange: false,
           buttons: [ 'copy', 'excel', 'pdf', 'colvis' ],
           aoColumns: [

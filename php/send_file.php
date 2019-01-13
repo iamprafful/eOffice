@@ -1,6 +1,6 @@
 <?php
   session_start();
-  if ($_SESSION["logged_in"]=="true" && $_SESSION["privilage"]=="1") {
+  if ($_SESSION["logged_in"]=="true" && $_SESSION["privilage"]=="0") {
     include("config.php");
   }
   else {

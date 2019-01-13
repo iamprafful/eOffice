@@ -26,7 +26,7 @@ if ($num==1) {
 	else if($row['privilage']==0)
 	{
 		$_SESSION["privilage"]=0;
-		header('location: ../dashboard.php');
+		header('location: ../inbox.php');
 	}
 }
 else
