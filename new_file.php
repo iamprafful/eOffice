@@ -151,7 +151,7 @@ function select_check(val, input_name){
 </script>
 <div class="padding">
   <div class="row"></div>
-  <form method="post">
+  <form method="post" enctype="multipart/form-data">
         <div class="box">
           <div class="box-header">
             <h2>Register File</h2>
@@ -162,7 +162,7 @@ function select_check(val, input_name){
               <div class="col-sm-3">
                 <div class="form-group">
                   <label>File Type</label>
-                  <select name="role"  class="form-control select2" data-ui-jp="select2" data-ui-options="{theme: 'bootstrap'}" onchange="select_check(this.value, 'other_value_type');">
+                  <select name="type"  class="form-control select2" data-ui-jp="select2" data-ui-options="{theme: 'bootstrap'}" onchange="select_check(this.value, 'other_value_type');">
                     <option value="-1">Select Type</option>
                     <?php
                     $conn = mysqli_connect($servername,$username,$password,$dbname);
@@ -266,7 +266,7 @@ function select_check(val, input_name){
                     if (mysqli_num_rows($result) > 0) {
                       // output data of each row
                       while($row = mysqli_fetch_assoc($result)) {
-                        echo '<option value="'.$row['file_type'].'">'.$row['file_type'].'</option>';
+                        echo '<option value="'.$row['subject'].'">'.$row['subject'].'</option>';
                       }
                     } else {
 
@@ -284,21 +284,21 @@ function select_check(val, input_name){
               <div class="col-sm-8">
                 <div class="form-group">
                   <label>Description</label>
-                  <input type="text" class="form-control" required name="Description" placeholder="Description here">
+                  <input type="text" class="form-control" required name="description" placeholder="Description here">
                 </div>
               </div>
               <div class="col-sm-4">
                 <div class="form-group">
                   <label>Add Notesheet</label>
-                  <select name="notsheet"  class="form-control select2" data-ui-jp="select2" data-ui-options="{theme: 'bootstrap'}" onchange="select_check(this.value, 'other_value_subject');">
+                  <select name="notesheet[]"  class="form-control select2-multiple" multiple data-ui-jp="select2" data-ui-options="{theme: 'bootstrap'}" onchange="select_check(this.value, 'other_value_subject');">
                     <option value="-1">Select Notesheet</option>
                     <?php
-                    $sql='select distinct subject from files order by subject';
+                    $sql='select id, subject from notesheet';
                     $result = mysqli_query($conn, $sql);
                     if (mysqli_num_rows($result) > 0) {
                       // output data of each row
                       while($row = mysqli_fetch_assoc($result)) {
-                        echo '<option value="'.$row['subject'].'">'.$row['subject'].'</option>';
+                        echo '<option value="'.$row['id'].'">'.$row['id'].' - '.$row['subject'].'</option>';
                       }
                     } else {
 
@@ -312,7 +312,7 @@ function select_check(val, input_name){
               <div class="col-sm-6">
                 <div class="form-group">
                   <label>Send for action</label>
-                  <select name="send_action" class="form-control select2-multiple" multiple data-ui-jp="select2" data-ui-options="{theme: 'bootstrap'}">
+                  <select name="send_action[]" class="form-control select2-multiple" multiple data-ui-jp="select2" data-ui-options="{theme: 'bootstrap'}">
                     <?php
                     $sql='select user_id, user_name from user where privilage=0 order by user_name';
                     $result = mysqli_query($conn, $sql);
@@ -331,7 +331,7 @@ function select_check(val, input_name){
               <div class="col-sm-6">
                 <div class="form-group">
                   <label>Send for information</label>
-                  <select name="send_information" class="form-control select2-multiple" multiple data-ui-jp="select2" data-ui-options="{theme: 'bootstrap'}">
+                  <select name="send_information[]" class="form-control select2-multiple" multiple data-ui-jp="select2" data-ui-options="{theme: 'bootstrap'}">
                     <?php
                     $sql='select user_id, user_name from user where privilage=0 order by user_name';
                     $result = mysqli_query($conn, $sql);
@@ -359,7 +359,7 @@ function select_check(val, input_name){
                 <div class="form-group">
                   <label>Upload File</label><br>
                   <label class="custom-file">
-                    <input type="file" id="file" class="custom-file-input">
+                    <input type="file" id="file" class="custom-file-input" name="file">
                     <span class="custom-file-control"></span>
                   </label>
                 </div>
@@ -368,8 +368,8 @@ function select_check(val, input_name){
           </div>
           <div class=" p-a text-right">
             <input type="reset" class="btn default" value="Clear">
-            <input type="submit" class="btn default" value="Save Draft" formaction="php/save_draft.php">
-            <input type="submit" class="btn btn-primary" value="Send" formaction="php/send_file.php">
+            <input type="submit" class="btn default" value="Save Draft" formaction="php/send_file.php?status=0">
+            <input type="submit" class="btn btn-primary" value="Send" formaction="php/send_file.php?status=1">
           </div>
         </div>
       </form>

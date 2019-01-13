@@ -68,11 +68,27 @@ $nav='<nav class="scroll nav-stacked nav-stacked-rounded nav-color">
       </a>
     </li>
     <li>
+      <a href="notesheet_drafts.php" class="b-default">
+        <span class="nav-icon text-white no-fade">
+          <i class="ion-android-drafts"></i>
+        </span>
+        <span class="nav-text">Notesheet Drafts</span>
+      </a>
+    </li>
+    <li>
       <a href="new_notesheet.php" class="b-default">
         <span class="nav-icon text-white no-fade">
           <i class="ion-android-add"></i>
         </span>
         <span class="nav-text">New Notesheet</span>
+      </a>
+    </li>
+    <li>
+      <a href="link_notesheet.php" class="b-default">
+        <span class="nav-icon text-white no-fade">
+          <i class="ion-link"></i>
+        </span>
+        <span class="nav-text">Link Notesheet</span>
       </a>
     </li>
     <li>
