@@ -1,8 +1,8 @@
 <?php
 session_start();
-if ($_SESSION["logged_in"]=="true" && $_SESSION["privilage"]=="1") {
-  include("menu/menu_admin.php");
-  include("notif/admin_notif.php");
+if ($_SESSION["logged_in"]=="true" && $_SESSION["privilage"]=="0") {
+  include("menu/menu_user.php");
+  include("notif/user_notif.php");
   include("php/config.php");
 }
 else {
@@ -13,7 +13,7 @@ else {
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Administrator</title>
+  <title>File Tracking System | Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimal-ui" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
