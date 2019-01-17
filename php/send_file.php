@@ -41,6 +41,7 @@
     $sender="'".$_POST["sender"]."'";
   }
   $letter_no="'".$_POST["letter_no"]."'";
+  $mail_type="'".$_POST["mail_type"]."'";
   $dgp_no="'".$_POST["dgp_no"]."'";
   $date="'".date("Y-m-d", strtotime($_POST["date"]))."'";
   if($_POST["subject"]=="other")
@@ -50,6 +51,7 @@
   else {
     $subject="'".$_POST["subject"]."'";
   }
+  $send_to="'".$_POST["send_to"]."'";
   $description="'".$_POST["description"]."'";
   $remark="'".$_POST["remark"]."'";
   $temp = explode(".", $_FILES["file"]["name"]);
@@ -62,29 +64,27 @@
     if(move_uploaded_file($_FILES['file']['tmp_name'], $upload_url))
     {
       $register_file_sql = "INSERT INTO files (id, file_no, sender, letter_no, dgp_office_no, letter_date, time_limit, subject, description, creator_id, file_type, file_loc)
-                               VALUES ($id, $file_no, $sender, $letter_no, $dgp_no, $date, '0', $subject, $description, '".$user."', $type, '".$upload_url."')";
+                               VALUES ($id, $file_no, $sender, $letter_no, $dgp_no, $date, '0', $subject, $description, '".$user."', $type, '".$newfilename."')";
 
       if ($conn->query($register_file_sql) === TRUE)
       {
-        foreach ($_POST["notesheet"] as $key => $notesheet_id) {
-          $link_notesheet="UPDATE notesheet set file_id='".$id."' where id=".$notesheet_id;
-          if ($conn->query($link_notesheet) === FALSE) {
-            echo "Error: " .$link_notesheet. "<br>" . $conn->error;
+        $new_transaction_action = "INSERT into transactions (type, file_id, sender_id, receiver_id, status, remark) VALUES ($mail_type, '".$id."', '".$user."', $send_to, '".$status."', $remark)";
+        if ($conn->query($new_transaction_action) === FALSE) {
+          echo "Error: " .$new_transaction_action. "<br>" . $conn->error;
+        }
+        else {
+          foreach ($_POST["notesheet"] as $key => $notesheet_id) {
+            $link_notesheet="UPDATE notesheet set file_id='".$id."' where id=".$notesheet_id;
+            if ($conn->query($link_notesheet) === FALSE) {
+              echo "Error: " .$link_notesheet. "<br>" . $conn->error;
+            }
           }
         }
-        foreach ($_POST["send_action"] as $key => $receiver_id) {
-          $new_transaction_action = "INSERT into transactions (type, file_id, sender_id, receiver_id, status, remark) VALUES ('1', '".$id."', '".$user."', '".$receiver_id."', '".$status."', $remark)";
-          if ($conn->query($new_transaction_action) === FALSE) {
-            echo "Error: " .$new_transaction_action. "<br>" . $conn->error;
-          }
+        if ($status==1) {
+          header("Location: ../sent_files.php");
+        } else {
+          header("Location: ../drafts.php");
         }
-        foreach ($_POST["send_information"] as $key => $receiver_id) {
-          $new_transaction_information = "INSERT into transactions (type, file_id, sender_id, receiver_id, status, remark) VALUES ('0', '".$id."', '".$user."', '".$receiver_id."', '".$status."', $remark)";
-          if ($conn->query($new_transaction_information) === FALSE) {
-            echo "Error: " .$new_transaction_information. "<br>" . $conn->error;
-          }
-        }
-        header("Location: ../outbox.php");
       }
       else
       {

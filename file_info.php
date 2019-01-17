@@ -4,6 +4,48 @@ if ($_SESSION["logged_in"]=="true" && $_SESSION["privilage"]=="0") {
   include("menu/menu_user.php");
   include("notif/user_notif.php");
   include("php/config.php");
+  $transaction_id=$_GET['tid'];
+  $user_id= $_SESSION['user_id'];
+  $conn=new mysqli($servername, $username, $password, $dbname);
+  if ($conn->connect_error) {
+    $response['error']=true;
+    $response['message']="Connection Failed";
+    die(json_encode($response));
+  }
+  $sql="SELECT f.* from files f where id=(SELECT t.file_id from transactions t where id='".$transaction_id."')";
+  $result=$conn->query($sql);
+  if ($result->num_rows>0) {
+    while ($row=$result->fetch_assoc()) {
+      $file_id=$row["id"];
+      $file_no=$row["file_no"];
+      $letter_no=$row["letter_no"];
+      $sender=$row["sender"];
+      $dgp_no=$row["dgp_office_no"];
+      $letter_date=$row["letter_date"];
+      $subject=$row["subject"];
+      $description=$row["description"];
+      $file_type=$row["file_type"];
+      $file_loc=$row["file_loc"];
+    }
+  }
+  else {
+
+  }
+  $transaction_check_sql="SELECT t.*, u.user_name  from transactions t inner join user u on u.user_id=t.sender_id where t.id=".$transaction_id;
+  $result=$conn->query($transaction_check_sql);
+  if ($result->num_rows>0) {
+    while ($row=$result->fetch_assoc()) {
+      $forwarded_by=$row["user_name"];
+      $sender_id=$row["sender_id"];
+      $remark=$row["remark"];
+      $mail_type=$row["type"];
+      $dispatch_time=$row["dispatch_time"];
+    }
+  }
+  else {
+
+  }
+
 }
 else {
   header('location: index.php');
@@ -13,7 +55,7 @@ else {
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>File Tracking System | Inbox</title>
+  <title>File Tracking System | File Info</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimal-ui" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
@@ -142,52 +184,225 @@ else {
 <div class="padding">
   <div class="box">
     <div class="box-header">
-      <h2>Inbox Files</h2>
-    </div>
-    <div class="table-responsive" id="datatable">
-      <table data-ui-jp="dataTable" data-ui-options="{
-          sAjaxSource: 'api/file_inbox.php',
-          paging: false,
-          lengthChange: false,
-          buttons: [ 'copy', 'excel', 'pdf', 'colvis' ],
-          aoColumns: [
-            { mData: 'id' },
-            { mData: 'file_no' },
-            { mData: 'subject' },
-            { mData: 'user_name' },
-            { mData: 'file_type' },
-            { mData: 'type' },
-            { mData: 'dispatch_time' },
-            { mData: 'status' }
-          ],
-          'initComplete': function () {
-            this.api().buttons().container()
-              .appendTo( '#datatable .col-md-6:eq(0)' );
-              var api = this.api();
-              api.$('tr').click( function () {
-                  var id=$(this).closest('tr').find('td:eq(0)').text();
-                  location.href = 'file_info.php?pid=0&tid='+id;
-              } );
-          }
-        }" class="table table-striped b-t b-b">
-        <thead>
-          <tr>
-            <th  style="width:5%">ID</th>
-            <th  style="width:10%">File Number</th>
-            <th  style="width:30%">Subject</th>
-            <th  style="width:15%">Received From</th>
-            <th  style="width:15%">File Type</th>
-            <th  style="width:10%">Mail Type</th>
-            <th  style="width:15%">Dispatch Time</th>
-            <th  style="width:5%">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-        </tbody>
-      </table>
+      <h2><Strong>Subject:</strong> <?php echo $subject ?></h2><BR>
+      <div class="row">
+        <div class="col-sm-6">
+          <strong>File ID: </strong><?php echo $file_id; ?><br>
+          <Strong>Sender: </strong><?php echo $sender; ?><br>
+        </div>
+        <div class="col-sm-6" style="text-align:right;">
+          <Strong>Date: </strong><?php echo $letter_date; ?><br>
+          <strong>File Number: </strong><?php echo $file_no; ?> | <Strong>Letter Number: </strong> <?php echo $letter_no ?>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-6">
+          <strong>Forwarded from: </strong><?php echo $forwarded_by; ?> at <?php echo $dispatch_time; ?><br>
+          <Strong>DGP Office number: </strong><?php echo $dgp_no; ?>
+        </div>
+      </div><br>
+      <div class="row">
+        <div class="col-sm-12">
+          <strong>Description: </strong><br><?php echo $description; ?>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-sm-12">
+          <strong>Remark: </strong><br><?php echo $remark; ?>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-sm-12">
+          <strong>Linked notesheets:</strong><br>
+          <table class="table table-bordered table-hover">
+            <thead>
+              <th>ID</th>
+              <th>Notesheet Number</th>
+              <th>Created by</th>
+              <th>Remark</th>
+              <th>Date  Created</th>
+            </thead>
+            <tbody class="table-hover table-striped">
+              <?php
+              $sql="SELECT n.*, u.user_name from notesheet n inner join user u on u.user_id=n.created_by where n.file_id=".$file_id;
+              $result=$conn->query($sql);
+              if ($result->num_rows>0) {
+                while ($row=$result->fetch_assoc()) {
+                  echo "<td>".$row["id"]."</td>";
+                  echo "<td>".$row["number"]."</td>";
+                  echo "<td>".$row["user_name"]."</td>";
+                  echo "<td>".$row["remark"]."</td>";
+                  echo "<td>".$row["date_created"]."</td>";
+                }
+              }
+              else {
+                echo "<td colspan='5' style='text-align:center;'>No notesheet linked yet</td>";
+              }
+              ?>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class=" p-a text-right">
+        <button type="button" class="btn default" onclick="window.history.back();">Back</button>
+        <button type="button" class="btn default" data-toggle="modal" data-target="#forward" data-ui-toggle-class="zoom" data-ui-target="#animate">Forward</button>
+        <button type="button" class="btn default" data-toggle="modal" data-target="#reply" data-ui-toggle-class="zoom" data-ui-target="#animate">Reply</button>
+        <button type="button" class="btn default" onclick="window.location.assign('trace_file.php?file_id=<?php echo $file_id; ?>');">Trace File</button>
+        <?php
+        if($file_loc=="")
+        {
+          echo '<button type="button" class="btn default" >No Attachments</button>';
+        }
+        else{
+          $quoted_file_loc="'file/".$file_loc."'";
+          echo '<button type="button" class="btn default" onclick="window.location.assign('.$quoted_file_loc.');">See Attachment</button>';
+        }
+         ?>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#close" data-ui-toggle-class="zoom" data-ui-target="#animate">Close File</button>
+      </div>
     </div>
   </div>
 </div>
+<!-- forward modal -->
+<div id="forward" class="modal black-overlay fade animate" data-backdrop="false">
+  <div class="row-col h-v">
+    <div class="row-cell v-m">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+          	<h5 class="modal-title">Forward File</h5>
+          </div>
+          <div class="modal-body">
+		    <form method="post" action="php/forward_file.php">
+
+               <div class="form-group">
+                 <label>Send to:</label>
+                 <select name="send_to" class="select2" data-ui-jp="select2" data-ui-options="{theme: 'bootstrap'}">
+                   <option value="-1">None Selected</option>
+                   <?php
+                   $sql='select user_id, user_name from user where privilage=0 and user_id <> '.$user_id.' order by user_name';
+                   $result = mysqli_query($conn, $sql);
+                   if (mysqli_num_rows($result) > 0) {
+                     // output data of each row
+                     while($row = mysqli_fetch_assoc($result)) {
+                       echo '<option value="'.$row['user_id'].'">'.$row['user_name'].'</option>';
+                     }
+                   } else {
+
+                   }
+                   ?>
+                 </select>
+               </div>
+               <div class="md-form-group float-label">
+                 <input type="text" class="md-input" required name="remark">
+                 <label>Remark</label>
+               </div>
+               <div class="row">
+                 <div class="col-sm-12 from-group">
+                   <label>Choose mail type</label><br>
+                   <label class="md-check">
+                     <input type="radio" name="mail_type" checked value="Action">
+                     <i class="blue"></i>
+                     Send for action
+                   </label><br>
+                   <label class="md-check">
+                     <input type="radio" name="mail_type" value="Information">
+                     <i class="blue"></i>
+                     Send for information
+                   </label>
+                 </div>
+               </div>
+          </div>
+          <div class="modal-footer">
+            <input type="hidden" name="file_id" value="<?php echo $file_id; ?>">
+            <input type="hidden" name="transaction_id" value="<?php echo $transaction_id; ?>">
+            <button type="button" class="btn dark-white p-x-md" data-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary p-x-md">Forward</button>
+			</form>
+          </div>
+        </div><!-- /.modal-content -->
+      </div>
+    </div>
+  </div>
+</div>
+<div id="reply" class="modal black-overlay fade animate" data-backdrop="false">
+  <div class="row-col h-v">
+    <div class="row-cell v-m">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+          	<h5 class="modal-title">Reply to sender</h5>
+          </div>
+          <div class="modal-body">
+		    <form method="post" action="php/forward_file.php">
+               <div class="md-form-group float-label">
+                 <input type="text" class="md-input" required name="remark">
+                 <label>Remark</label>
+               </div>
+               <div class="row">
+                 <div class="col-sm-12 from-group">
+                   <label>Choose mail type</label><br>
+                   <label class="md-check">
+                     <input type="radio" name="mail_type" checked value="Action">
+                     <i class="blue"></i>
+                     Send for action
+                   </label><br>
+                   <label class="md-check">
+                     <input type="radio" name="mail_type" value="Information">
+                     <i class="blue"></i>
+                     Send for information
+                   </label>
+                 </div>
+               </div>
+          </div>
+          <div class="modal-footer">
+            <input type="hidden" name="send_to" value="<?php echo $sender_id; ?>">
+            <input type="hidden" name="file_id" value="<?php echo $file_id; ?>">
+            <input type="hidden" name="transaction_id" value="<?php echo $transaction_id; ?>">
+            <button type="button" class="btn dark-white p-x-md" data-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary p-x-md">Reply</button>
+			</form>
+          </div>
+        </div><!-- /.modal-content -->
+      </div>
+    </div>
+  </div>
+</div>
+<div id="close" class="modal black-overlay fade animate" data-backdrop="false">
+  <div class="row-col h-v">
+    <div class="row-cell v-m">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+          	<h5 class="modal-title">Close file</h5>
+          </div>
+          <div class="modal-body">
+		    <form method="post" action="php/close_file.php">
+               <div class="row">
+                 <div class="col-sm-12 from-group">
+                   <div class="md-form-group">
+                     <textarea class="md-input" rows="4" name="closing_remark"></textarea>
+                     <label>Closing Remark</label>
+                   </div>
+                 </div>
+               </div>
+          </div>
+          <div class="modal-footer">
+            <input type="hidden" name="file_id" value="<?php echo $file_id; ?>">
+            <input type="hidden" name="transaction_id" value="<?php echo $transaction_id; ?>">
+            <button type="button" class="btn dark-white p-x-md" data-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary p-x-md">Close</button>
+			</form>
+          </div>
+        </div><!-- /.modal-content -->
+      </div>
+    </div>
+  </div>
+</div>
+<!-- / .forward modal -->
+
 <!-- ############ PAGE END-->
 
     </div>
@@ -307,3 +522,6 @@ else {
 <!-- endbuild -->
 </body>
 </html>
+<?php
+$conn->close();
+?>

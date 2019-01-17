@@ -14,11 +14,11 @@ $nav='<nav class="scroll nav-stacked nav-stacked-rounded nav-color">
       </a>
     </li>
     <li>
-      <a href="outbox.php" class="b-default">
+      <a href="sent_files.php" class="b-default">
         <span class="nav-icon text-white no-fade">
           <i class="ion-ios-paperplane"></i>
         </span>
-        <span class="nav-text">Outbox</span>
+        <span class="nav-text">Sent Files</span>
       </a>
     </li>
     <li>
@@ -60,11 +60,11 @@ $nav='<nav class="scroll nav-stacked nav-stacked-rounded nav-color">
       </a>
     </li>
     <li>
-      <a href="notesheet_outbox.php" class="b-default">
+      <a href="sent_notesheet.php" class="b-default">
         <span class="nav-icon text-white no-fade">
           <i class="ion-ios-paperplane"></i>
         </span>
-        <span class="nav-text">Notesheet Outbox</span>
+        <span class="nav-text">Sent Notesheet</span>
       </a>
     </li>
     <li>

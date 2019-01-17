@@ -151,7 +151,7 @@ function select_check(val, input_name){
 </script>
 <div class="padding">
   <div class="row"></div>
-  <form method="post" action="php/save_notesheet.php">
+  <form method="post" action="php/register_notesheet.php" enctype="multipart/form-data">
         <div class="box">
           <div class="box-header">
             <h2>Register Notesheet</h2>
@@ -201,7 +201,7 @@ function select_check(val, input_name){
                 <div class="form-group">
                   <label>Upload File</label><br>
                   <label class="custom-file">
-                    <input type="file" id="file" class="custom-file-input">
+                    <input type="file" id="file" class="custom-file-input" name="file">
                     <span class="custom-file-control"></span>
                   </label>
                 </div>

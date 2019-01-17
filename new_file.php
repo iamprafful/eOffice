@@ -4,6 +4,7 @@ if ($_SESSION["logged_in"]=="true" && $_SESSION["privilage"]=="0") {
   include("menu/menu_user.php");
   include("notif/user_notif.php");
   include("php/config.php");
+  $user_id= $_SESSION['user_id'];
 }
 else {
   header('location: index.php');
@@ -293,7 +294,7 @@ function select_check(val, input_name){
                   <select name="notesheet[]"  class="form-control select2-multiple" multiple data-ui-jp="select2" data-ui-options="{theme: 'bootstrap'}" onchange="select_check(this.value, 'other_value_subject');">
                     <option value="-1">Select Notesheet</option>
                     <?php
-                    $sql='select id, subject from notesheet';
+                    $sql='select id, subject from notesheet where file_id is NULL';
                     $result = mysqli_query($conn, $sql);
                     if (mysqli_num_rows($result) > 0) {
                       // output data of each row
@@ -311,10 +312,11 @@ function select_check(val, input_name){
             <div class="row">
               <div class="col-sm-6">
                 <div class="form-group">
-                  <label>Send for action</label>
-                  <select name="send_action[]" class="form-control select2-multiple" multiple data-ui-jp="select2" data-ui-options="{theme: 'bootstrap'}">
+                  <label>Select receipent</label>
+                  <select name="send_to" class="form-control select2" data-ui-jp="select2" data-ui-options="{theme: 'bootstrap'}">
+                    <option value="-1">None Selected</option>
                     <?php
-                    $sql='select user_id, user_name from user where privilage=0 order by user_name';
+                    $sql='select user_id, user_name from user where privilage=0 and user_id <> '.$user_id.' order by user_name';
                     $result = mysqli_query($conn, $sql);
                     if (mysqli_num_rows($result) > 0) {
                       // output data of each row
@@ -328,32 +330,26 @@ function select_check(val, input_name){
                   </select>
                 </div>
               </div>
-              <div class="col-sm-6">
-                <div class="form-group">
-                  <label>Send for information</label>
-                  <select name="send_information[]" class="form-control select2-multiple" multiple data-ui-jp="select2" data-ui-options="{theme: 'bootstrap'}">
-                    <?php
-                    $sql='select user_id, user_name from user where privilage=0 order by user_name';
-                    $result = mysqli_query($conn, $sql);
-                    if (mysqli_num_rows($result) > 0) {
-                      // output data of each row
-                      while($row = mysqli_fetch_assoc($result)) {
-                        echo '<option value="'.$row['user_id'].'">'.$row['user_name'].'</option>';
-                      }
-                    } else {
-
-                    }
-                    ?>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <div class="row">
               <div class="col-sm-6">
                 <div class="form-group">
                   <label>Remark</label>
                   <input type="text" class="form-control" required name="remark" placeholder="Remark here">
                 </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-6 from-group">
+                <label>Choose mail type</label><br>
+                <label class="md-check">
+                  <input type="radio" name="mail_type" checked value="Action">
+                  <i class="blue"></i>
+                  Send for action
+                </label><br>
+                <label class="md-check">
+                  <input type="radio" name="mail_type" value="Information">
+                  <i class="blue"></i>
+                  Send for information
+                </label>
               </div>
               <div class="col-sm-6">
                 <div class="form-group">

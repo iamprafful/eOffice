@@ -2,6 +2,7 @@
   session_start();
   if ($_SESSION["logged_in"]=="true" && $_SESSION["privilage"]=="0") {
     include("config.php");
+    $user= $_SESSION['user_id'];
   }
   else {
     header('location: ../index.php');
@@ -12,36 +13,41 @@
   {
     die("Connection failed: " . $conn->connect_error);
   }
-
-  $user_name="'".$_POST["user_name"]."'";
-  $email="'".$_POST["email"]."'";
-  $phone="'".$_POST["phone"]."'";
-  if($_POST["supervisor"]=="none")
+  $notesheet_no="'".$_POST["notesheet_no"]."'";
+  if($_POST["subject"]=="other")
   {
-    $supervisor="NULL";
+    $subject="'".$_POST["other_value_subject"]."'";
   }
   else {
-    $supervisor="'".$_POST["supervisor"]."'";
+    $subject="'".$_POST["subject"]."'";
   }
-  if($_POST["role"]=="other")
-  {
-    $role="'".$_POST["other_value_role"]."'";
+  $remark="'".$_POST["remark"]."'";
+  $temp = explode(".", $_FILES["file"]["name"]);
+  $newfilename = round(microtime(true)) . '.' . end($temp);
+  $upload_url = '../notesheet/'. $newfilename;
+  $ok=1;
+  $file_type=$_FILES['file']['type'];
+  if ($file_type=="application/pdf" || $file_type=="image/gif" || $file_type=="image/jpeg") {
+    if(move_uploaded_file($_FILES['file']['tmp_name'], $upload_url))
+    {
+      $register_notesheet_sql = "INSERT INTO notesheet (number, subject, remark, created_by, ns_loc)
+                               VALUES ($notesheet_no, $subject, $remark, '".$user."', '".$newfilename."')";
+
+      if ($conn->query($register_notesheet_sql) === TRUE)
+      {
+        header("Location: ../outbox.php");
+      }
+      else
+      {
+        echo "Error: " . $register_file_sql . "<br>" . $conn->error;
+      }
+      $conn->close();
+    }
+    else {
+      echo "Problem uploading file";
+    }
   }
   else {
-    $role="'".$_POST["role"]."'";
-  }
-  $password="'".$_POST["password"]."'";
-
-  $register_user_sql = "INSERT INTO user (user_name, email, mobile, password, supervisor, role, privilage, status)
-                           VALUES ($user_name, $email, $phone, $password, $supervisor, $role, '0', '1')";
-
-  if ($conn->query($register_user_sql) === TRUE)
-  {
-    header("Location: ../admin.php");
-  }
-  else
-  {
-    echo "Error: " . $register_user_sql . "<br>" . $conn->error;
-  }
-  $conn->close();
+     echo "You may only upload PDFs, JPEGs or GIF files.<br>";
+   }
 ?>
