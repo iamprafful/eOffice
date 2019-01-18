@@ -163,8 +163,13 @@ else {
           'initComplete': function () {
             this.api().buttons().container()
               .appendTo( '#datatable .col-md-6:eq(0)' );
+              var api = this.api();
+              api.$('tr').click( function () {
+                  var id=$(this).closest('tr').find('td:eq(0)').text();
+                  location.href = 'file_info.php?pid=2&tid='+id;
+              } );
           }
-        }" class="table table-striped b-t b-b">
+        }" class="table table-striped b-t b-b table-hover">
         <thead>
           <tr>
             <th  style="width:5%">ID</th>

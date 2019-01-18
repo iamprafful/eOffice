@@ -4,6 +4,8 @@ if ($_SESSION["logged_in"]=="true" && $_SESSION["privilage"]=="0") {
   include("menu/menu_user.php");
   include("notif/user_notif.php");
   include("php/config.php");
+  $user_id= $_SESSION['user_id'];
+  $notesheet_id=$_GET["nid"];
 }
 else {
   header('location: index.php');
@@ -13,7 +15,7 @@ else {
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>File Tracking System | Sent Files</title>
+  <title>File Tracking System | Forward Notesheet</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimal-ui" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
@@ -75,7 +77,7 @@ else {
                 <a data-toggle="modal" data-target="#aside" class="navbar-item pull-left hidden-lg-up p-r m-a-0">
                   <i class="ion-navicon"></i>
                 </a>
-                <div class="navbar-item pull-left h5" id="pageTitle">Sent Files</div>
+                <div class="navbar-item pull-left h5" id="pageTitle">Forward Notesheet</div>
                 <!-- nabar right -->
                 <ul class="nav navbar-nav pull-right">
                   <li class="nav-item dropdown pos-stc-xs">
@@ -139,54 +141,66 @@ else {
     <div class="app-body">
 
 <!-- ############ PAGE START-->
+<script type="text/javascript">
+function select_check(val, input_name){
+ var element=document.getElementById(input_name);
+ if(val=='other')
+   element.style.display='block';
+ else
+   element.style.display='none';
+}
+
+</script>
 <div class="padding">
-  <div class="box">
-    <div class="box-header">
-      <h2>Sent Files</h2>
-    </div>
-    <div class="table-responsive" id="datatable">
-      <table data-ui-jp="dataTable" data-ui-options="{
-          sAjaxSource: 'api/file_sent.php',
-          paging: false,
-          lengthChange: false,
-          buttons: [ 'copy', 'excel', 'pdf', 'colvis' ],
-          aoColumns: [
-            { mData: 'id' },
-            { mData: 'file_no' },
-            { mData: 'subject' },
-            { mData: 'user_name' },
-            { mData: 'file_type' },
-            { mData: 'type' },
-            { mData: 'dispatch_time' },
-            { mData: 'status' }
-          ],
-          'initComplete': function () {
-            this.api().buttons().container()
-              .appendTo( '#datatable .col-md-6:eq(0)' );
-              var api = this.api();
-              api.$('tr').click( function () {
-                  var id=$(this).closest('tr').find('td:eq(0)').text();
-                  location.href = 'file_info.php?pid=1&tid='+id;
-              } );
-          }
-        }" class="table table-striped b-t b-b table-hover">
-        <thead>
-          <tr>
-            <th  style="width:5%">ID</th>
-            <th  style="width:10%">File Number</th>
-            <th  style="width:30%">Subject</th>
-            <th  style="width:15%">Sent to</th>
-            <th  style="width:15%">File Type</th>
-            <th  style="width:10%">Mail Type</th>
-            <th  style="width:15%">Dispatch Time</th>
-            <th  style="width:5%">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-        </tbody>
-      </table>
-    </div>
-  </div>
+  <div class="row"></div>
+  <form method="post" enctype="multipart/form-data">
+        <div class="box">
+          <div class="box-header">
+            <h2>Send Notesheet</h2>
+          </div>
+          <div class="box-body">
+            <p class="text-muted">Please fill the information to continue</p>
+
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label>Select receipent</label>
+                  <select name="send_to" class="form-control select2" data-ui-jp="select2" data-ui-options="{theme: 'bootstrap'}">
+                    <option value="-1">None Selected</option>
+                    <?php
+                    $conn = mysqli_connect($servername,$username,$password,$dbname);
+                    if (!$conn) {
+                        die("Connection failed: " . mysqli_connect_error());
+                    }
+                    $sql='select user_id, user_name from user where privilage=0 and user_id <> '.$user_id.' order by user_name';
+                    $result = mysqli_query($conn, $sql);
+                    if (mysqli_num_rows($result) > 0) {
+                      // output data of each row
+                      while($row = mysqli_fetch_assoc($result)) {
+                        echo '<option value="'.$row['user_id'].'">'.$row['user_name'].'</option>';
+                      }
+                    } else {
+
+                    }
+                    ?>
+                  </select>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label>Remark</label>
+                  <input type="text" class="form-control" required name="remark" placeholder="Remark here">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class=" p-a text-right">
+            <input type="reset" class="btn default" value="Clear">
+            <input type="hidden" name="notesheet_id" value="<?php echo $notesheet_id; ?>">
+            <input type="submit" class="btn btn-primary" value="Send" formaction="php/send_noteheet.php">
+          </div>
+        </div>
+      </form>
 </div>
 <!-- ############ PAGE END-->
 

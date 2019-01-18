@@ -35,7 +35,7 @@
 
       if ($conn->query($register_notesheet_sql) === TRUE)
       {
-        header("Location: ../outbox.php");
+        header("Location: ../pending_notesheets.php");
       }
       else
       {

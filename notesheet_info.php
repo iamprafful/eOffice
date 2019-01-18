@@ -13,12 +13,12 @@ if ($_SESSION["logged_in"]=="true" && $_SESSION["privilage"]=="0") {
     $response['message']="Connection Failed";
     die(json_encode($response));
   }
-  $sql="SELECT f.* from files f where id=(SELECT t.file_id from transactions t where id='".$transaction_id."')";
+  $sql="SELECT f.* from notesheet f where id=(SELECT t.notesheet_id from notesheet_transactions t where id='".$transaction_id."')";
   $result=$conn->query($sql);
   if ($result->num_rows>0) {
     while ($row=$result->fetch_assoc()) {
-      $file_id=$row["id"];
-      $file_no=$row["file_no"];
+      $notesheet_id=$row["id"];
+      $notesheet_number=$row["number"];
       $letter_no=$row["letter_no"];
       $sender=$row["sender"];
       $dgp_no=$row["dgp_office_no"];

@@ -171,6 +171,10 @@ function select_check(val, input_name){
                   <select name="subject"  class="form-control select2" data-ui-jp="select2" data-ui-options="{theme: 'bootstrap'}" onchange="select_check(this.value, 'other_value_subject');">
                     <option value="-1">Select Subject</option>
                     <?php
+                    $conn = mysqli_connect($servername,$username,$password,$dbname);
+                    if (!$conn) {
+                        die("Connection failed: " . mysqli_connect_error());
+                    }
                     $sql='select distinct subject from notesheet order by subject';
                     $result = mysqli_query($conn, $sql);
                     if (mysqli_num_rows($result) > 0) {

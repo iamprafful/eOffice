@@ -4,6 +4,7 @@ if ($_SESSION["logged_in"]=="true" && $_SESSION["privilage"]=="0") {
   include("menu/menu_user.php");
   include("notif/user_notif.php");
   include("php/config.php");
+  $file_id=$_GET["file_id"];
 }
 else {
   header('location: index.php');
@@ -13,7 +14,7 @@ else {
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>File Tracking System | Sent Files</title>
+  <title>File Tracking System | Trace File</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimal-ui" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
@@ -75,7 +76,7 @@ else {
                 <a data-toggle="modal" data-target="#aside" class="navbar-item pull-left hidden-lg-up p-r m-a-0">
                   <i class="ion-navicon"></i>
                 </a>
-                <div class="navbar-item pull-left h5" id="pageTitle">Sent Files</div>
+                <div class="navbar-item pull-left h5" id="pageTitle">Trace File</div>
                 <!-- nabar right -->
                 <ul class="nav navbar-nav pull-right">
                   <li class="nav-item dropdown pos-stc-xs">
@@ -140,53 +141,43 @@ else {
 
 <!-- ############ PAGE START-->
 <div class="padding">
-  <div class="box">
-    <div class="box-header">
-      <h2>Sent Files</h2>
-    </div>
-    <div class="table-responsive" id="datatable">
-      <table data-ui-jp="dataTable" data-ui-options="{
-          sAjaxSource: 'api/file_sent.php',
-          paging: false,
-          lengthChange: false,
-          buttons: [ 'copy', 'excel', 'pdf', 'colvis' ],
-          aoColumns: [
-            { mData: 'id' },
-            { mData: 'file_no' },
-            { mData: 'subject' },
-            { mData: 'user_name' },
-            { mData: 'file_type' },
-            { mData: 'type' },
-            { mData: 'dispatch_time' },
-            { mData: 'status' }
-          ],
-          'initComplete': function () {
-            this.api().buttons().container()
-              .appendTo( '#datatable .col-md-6:eq(0)' );
-              var api = this.api();
-              api.$('tr').click( function () {
-                  var id=$(this).closest('tr').find('td:eq(0)').text();
-                  location.href = 'file_info.php?pid=1&tid='+id;
-              } );
-          }
-        }" class="table table-striped b-t b-b table-hover">
-        <thead>
-          <tr>
-            <th  style="width:5%">ID</th>
-            <th  style="width:10%">File Number</th>
-            <th  style="width:30%">Subject</th>
-            <th  style="width:15%">Sent to</th>
-            <th  style="width:15%">File Type</th>
-            <th  style="width:10%">Mail Type</th>
-            <th  style="width:15%">Dispatch Time</th>
-            <th  style="width:5%">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-        </tbody>
-      </table>
-    </div>
-  </div>
+  <ul class="timeline">
+    <li class="tl-header">
+      <div class="btn btn-sm white btn-rounded">Start</div>
+    </li>
+    <?php
+    $conn = new mysqli($servername, $username, $password, $dbname);
+    // Check connection
+    if ($conn->connect_error)
+    {
+      die("Connection failed: " . $conn->connect_error);
+    }
+    $trace_file='(Select (Select user_name from user where user_id=sender_id) "sender_id", dispatch_time, remark from transactions where forward_status=1 and file_id='.$file_id.' order by dispatch_time) union all (Select (Select user_name from user where user_id=sender_id), dispatch_time, remark from transactions where forward_status=0 and file_id='.$file_id.' or forward_status=2 and file_id='.$file_id.') union all (Select (Select user_name from user where user_id=receiver_id) as "sender_id", "Current Position" as "dispatch_time", "" as "remark" from transactions where forward_status=0 and file_id='.$file_id.' or forward_status=2 and file_id='.$file_id.');';
+    $result = $conn->query($trace_file);
+    if ($result->num_rows > 0) {
+      // output data of each row
+      while($row = $result->fetch_assoc()) {
+        echo '<li class="tl-item">
+          <div class="tl-wrap b-info">
+            <span class="tl-date text-muted">'.$row["dispatch_time"].'</span>
+            <div class="tl-content box-color text-color w-xl w-auto-xs">
+              <span class="arrow b-white left pull-top"></span>
+              <div class="text-lt p-x m-b-sm">'.$row["sender_id"].'</div>
+              <div class="p-a b-t b-light">
+                '.$row["remark"].'
+              </div>
+            </div>
+          </div>
+        </li>';
+      }
+    } else {
+    }
+
+    ?>
+    <li class="tl-header">
+      <div class="btn btn-sm white btn-rounded">End</div>
+    </li>
+  </ul>
 </div>
 <!-- ############ PAGE END-->
 

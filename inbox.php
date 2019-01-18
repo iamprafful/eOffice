@@ -169,7 +169,7 @@ else {
                   location.href = 'file_info.php?pid=0&tid='+id;
               } );
           }
-        }" class="table table-striped b-t b-b">
+        }" class="table table-striped b-t b-b table-hover">
         <thead>
           <tr>
             <th  style="width:5%">ID</th>

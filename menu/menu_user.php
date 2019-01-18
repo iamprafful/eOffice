@@ -52,6 +52,14 @@ $nav='<nav class="scroll nav-stacked nav-stacked-rounded nav-color">
       <span class="text-xs">Notesheet</span>
     </li>
     <li>
+      <a href="pending_notesheets.php" class="b-default">
+        <span class="nav-icon text-white no-fade">
+          <i class="fa fa-clock-o"></i>
+        </span>
+        <span class="nav-text">Pending Notesheets</span>
+      </a>
+    </li>
+    <li>
       <a href="notesheet_inbox.php" class="b-default">
         <span class="nav-icon text-white no-fade">
           <i class="ion-email"></i>
@@ -65,14 +73,6 @@ $nav='<nav class="scroll nav-stacked nav-stacked-rounded nav-color">
           <i class="ion-ios-paperplane"></i>
         </span>
         <span class="nav-text">Sent Notesheet</span>
-      </a>
-    </li>
-    <li>
-      <a href="notesheet_drafts.php" class="b-default">
-        <span class="nav-icon text-white no-fade">
-          <i class="ion-android-drafts"></i>
-        </span>
-        <span class="nav-text">Notesheet Drafts</span>
       </a>
     </li>
     <li>

@@ -13,7 +13,7 @@ else {
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>File Tracking System | Sent Files</title>
+  <title>File Tracking System | Pending Notesheets</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimal-ui" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
@@ -75,7 +75,7 @@ else {
                 <a data-toggle="modal" data-target="#aside" class="navbar-item pull-left hidden-lg-up p-r m-a-0">
                   <i class="ion-navicon"></i>
                 </a>
-                <div class="navbar-item pull-left h5" id="pageTitle">Sent Files</div>
+                <div class="navbar-item pull-left h5" id="pageTitle">Pending Notesheets</div>
                 <!-- nabar right -->
                 <ul class="nav navbar-nav pull-right">
                   <li class="nav-item dropdown pos-stc-xs">
@@ -142,23 +142,19 @@ else {
 <div class="padding">
   <div class="box">
     <div class="box-header">
-      <h2>Sent Files</h2>
+      <h2>Inbox Files</h2>
     </div>
     <div class="table-responsive" id="datatable">
       <table data-ui-jp="dataTable" data-ui-options="{
-          sAjaxSource: 'api/file_sent.php',
+          sAjaxSource: 'api/unsent_notesheets.php',
           paging: false,
           lengthChange: false,
           buttons: [ 'copy', 'excel', 'pdf', 'colvis' ],
           aoColumns: [
             { mData: 'id' },
-            { mData: 'file_no' },
+            { mData: 'number' },
             { mData: 'subject' },
-            { mData: 'user_name' },
-            { mData: 'file_type' },
-            { mData: 'type' },
-            { mData: 'dispatch_time' },
-            { mData: 'status' }
+            { mData: 'date_created' }
           ],
           'initComplete': function () {
             this.api().buttons().container()
@@ -166,20 +162,16 @@ else {
               var api = this.api();
               api.$('tr').click( function () {
                   var id=$(this).closest('tr').find('td:eq(0)').text();
-                  location.href = 'file_info.php?pid=1&tid='+id;
+                  location.href = 'forward_notesheet.php?nid='+id;
               } );
           }
         }" class="table table-striped b-t b-b table-hover">
         <thead>
           <tr>
             <th  style="width:5%">ID</th>
-            <th  style="width:10%">File Number</th>
-            <th  style="width:30%">Subject</th>
-            <th  style="width:15%">Sent to</th>
-            <th  style="width:15%">File Type</th>
-            <th  style="width:10%">Mail Type</th>
-            <th  style="width:15%">Dispatch Time</th>
-            <th  style="width:5%">Status</th>
+            <th  style="width:15%">Notesheet Number</th>
+            <th  style="width:60%">Subject</th>
+            <th  style="width:20%">Date</th>
           </tr>
         </thead>
         <tbody>

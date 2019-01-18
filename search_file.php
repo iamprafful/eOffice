@@ -13,7 +13,7 @@ else {
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>File Tracking System | Sent Files</title>
+  <title>File Tracking System | Search File</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimal-ui" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
@@ -75,7 +75,7 @@ else {
                 <a data-toggle="modal" data-target="#aside" class="navbar-item pull-left hidden-lg-up p-r m-a-0">
                   <i class="ion-navicon"></i>
                 </a>
-                <div class="navbar-item pull-left h5" id="pageTitle">Sent Files</div>
+                <div class="navbar-item pull-left h5" id="pageTitle">Search File</div>
                 <!-- nabar right -->
                 <ul class="nav navbar-nav pull-right">
                   <li class="nav-item dropdown pos-stc-xs">
@@ -142,22 +142,23 @@ else {
 <div class="padding">
   <div class="box">
     <div class="box-header">
-      <h2>Sent Files</h2>
+      <h2>All Files</h2>
     </div>
     <div class="table-responsive" id="datatable">
       <table data-ui-jp="dataTable" data-ui-options="{
-          sAjaxSource: 'api/file_sent.php',
+          sAjaxSource: 'api/files.php',
           paging: false,
           lengthChange: false,
           buttons: [ 'copy', 'excel', 'pdf', 'colvis' ],
           aoColumns: [
             { mData: 'id' },
             { mData: 'file_no' },
-            { mData: 'subject' },
-            { mData: 'user_name' },
             { mData: 'file_type' },
-            { mData: 'type' },
-            { mData: 'dispatch_time' },
+            { mData: 'subject' },
+            { mData: 'description' },
+            { mData: 'sender' },
+            { mData: 'letter_date' },
+            { mData: 'creator' },
             { mData: 'status' }
           ],
           'initComplete': function () {
@@ -174,11 +175,12 @@ else {
           <tr>
             <th  style="width:5%">ID</th>
             <th  style="width:10%">File Number</th>
-            <th  style="width:30%">Subject</th>
-            <th  style="width:15%">Sent to</th>
-            <th  style="width:15%">File Type</th>
-            <th  style="width:10%">Mail Type</th>
-            <th  style="width:15%">Dispatch Time</th>
+            <th  style="width:10%">File Type</th>
+            <th  style="width:10%">Subject</th>
+            <th  style="width:20%">Description</th>
+            <th  style="width:15%">Sender</th>
+            <th  style="width:10%">Date</th>
+            <th  style="width:15%">Creator</th>
             <th  style="width:5%">Status</th>
           </tr>
         </thead>
