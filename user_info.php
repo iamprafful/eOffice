@@ -1,13 +1,9 @@
 <?php
 session_start();
-if ($_SESSION["logged_in"]=="true" && $_SESSION["privilage"]=="0") {
-  include("menu/menu_user.php");
-  include("notif/user_notif.php");
-  include("php/config.php");
-  $user_id= $_SESSION['user_id'];
-  $notesheet_id=$_GET["nid"];
-}
-else {
+include("menu/menu_admin.php");
+include("notif/admin_notif.php");
+include("php/config.php");
+if ($_SESSION["logged_in"]!="true" && $_SESSION["privilage"]!="1") {
   header('location: index.php');
 }
  ?>
@@ -15,7 +11,7 @@ else {
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>File Tracking System | Forward Notesheet</title>
+  <title>User Info</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimal-ui" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
@@ -77,7 +73,7 @@ else {
                 <a data-toggle="modal" data-target="#aside" class="navbar-item pull-left hidden-lg-up p-r m-a-0">
                   <i class="ion-navicon"></i>
                 </a>
-                <div class="navbar-item pull-left h5" id="pageTitle">Forward Notesheet</div>
+                <div class="navbar-item pull-left h5" id="pageTitle">Dashboard</div>
                 <!-- nabar right -->
                 <ul class="nav navbar-nav pull-right">
                   <li class="nav-item dropdown pos-stc-xs">
@@ -142,8 +138,8 @@ else {
 
 <!-- ############ PAGE START-->
 <script type="text/javascript">
-function select_check(val, input_name){
- var element=document.getElementById(input_name);
+function select_check(val){
+ var element=document.getElementById('other_value_role');
  if(val=='other')
    element.style.display='block';
  else
@@ -153,51 +149,82 @@ function select_check(val, input_name){
 </script>
 <div class="padding">
   <div class="row"></div>
-  <form method="post" action="php/send_notesheet.php?action=0">
+  <form method="post" action="php/register_user.php">
         <div class="box">
           <div class="box-header">
-            <h2>Send Notesheet</h2>
+            <h2>Register User</h2>
           </div>
           <div class="box-body">
             <p class="text-muted">Please fill the information to continue</p>
+            <div class="form-group">
+              <label>User's Name</label>
+              <input type="text" class="form-control" required name="user_name">
+            </div>
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" class="form-control" required name="email">
+            </div>
+            <div class="form-group">
+              <label>Phone Number</label>
+              <input type="tel" pattern="[0-9]{10}" class="form-control" placeholder="XXX XXXX XXX" maxlength="10" required name="phone">
+            </div>
+            <div class="form-group">
+              <label>Supervisor</label>
+              <select name="supervisor" class="form-control select2" data-ui-jp="select2" data-ui-options="{theme: 'bootstrap'}" >
+                <option value="-1">Select Supervisor</option>
+                <?php
+                $conn = mysqli_connect($servername,$username,$password,$dbname);
+                if (!$conn) {
+                    die("Connection failed: " . mysqli_connect_error());
+                }
+                $sql='select user_name, user_id from user where privilage="0" order by user_name';
+                $result = mysqli_query($conn, $sql);
 
-            <div class="row">
-              <div class="col-sm-6">
-                <div class="form-group">
-                  <label>Select receipent</label>
-                  <select name="send_to" class="form-control select2" data-ui-jp="select2" data-ui-options="{theme: 'bootstrap'}">
-                    <option value="-1">None Selected</option>
-                    <?php
-                    $conn = mysqli_connect($servername,$username,$password,$dbname);
-                    if (!$conn) {
-                        die("Connection failed: " . mysqli_connect_error());
-                    }
-                    $sql='select user_id, user_name from user where privilage=0 and user_id <> '.$user_id.' order by user_name';
-                    $result = mysqli_query($conn, $sql);
-                    if (mysqli_num_rows($result) > 0) {
-                      // output data of each row
-                      while($row = mysqli_fetch_assoc($result)) {
-                        echo '<option value="'.$row['user_id'].'">'.$row['user_name'].'</option>';
-                      }
-                    } else {
+                if (mysqli_num_rows($result) > 0) {
+                  // output data of each row
+                  while($row = mysqli_fetch_assoc($result)) {
+                    echo '<option value="'.$row['user_id'].'">'.$row['user_name'].'</option>';
+                  }
+                } else {
 
-                    }
-                    ?>
-                  </select>
-                </div>
-              </div>
-              <div class="col-sm-6">
-                <div class="form-group">
-                  <label>Remark</label>
-                  <input type="text" class="form-control" required name="remark" placeholder="Remark here">
-                </div>
-              </div>
+                }
+                ?>
+                <option value="none">None</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Role</label>
+              <select name="role"  class="form-control select2" data-ui-jp="select2" data-ui-options="{theme: 'bootstrap'}" onchange="select_check(this.value);">
+                <option value="-1">Select Role</option>
+                <?php
+                $sql='select distinct role from user where privilage="0" order by role';
+                $result = mysqli_query($conn, $sql);
+
+                if (mysqli_num_rows($result) > 0) {
+                  // output data of each row
+                  while($row = mysqli_fetch_assoc($result)) {
+                    echo '<option value="'.$row['role'].'">'.$row['role'].'</option>';
+                  }
+                } else {
+
+                }
+
+                mysqli_close($conn);
+                ?>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <input type="text" class="form-control" name="other_value_role" id="other_value_role" style='display:none;' placeholder="Enter new role">
+            </div>
+            <div class="form-group">
+              <label>Create Password</label>
+              <input type="password" class="form-control" required maxlength="32" required name="password">
             </div>
           </div>
           <div class=" p-a text-right">
-            <input type="reset" class="btn default" value="Clear">
-            <input type="hidden" name="notesheet_id" value="<?php echo $notesheet_id; ?>">
-            <input type="submit" class="btn btn-primary" value="Send">
+            <button type="reset" class="btn default">Clear</button>
+            <button type="submit" class="btn btn-primary">Submit</button>
           </div>
         </div>
       </form>
