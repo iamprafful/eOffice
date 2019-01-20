@@ -13,40 +13,23 @@ if ($_SESSION["logged_in"]=="true" && $_SESSION["privilage"]=="0") {
     $response['message']="Connection Failed";
     die(json_encode($response));
   }
-  $sql="SELECT f.* from notesheet f where id=(SELECT t.notesheet_id from notesheet_transactions t where id='".$transaction_id."')";
+  $sql="SELECT n.*, (Select u.user_name from user u where u.user_id=n.created_by) as 'creator_name' from notesheet n where id=(SELECT nt.notesheet_id from notesheet_transactions nt where id='".$transaction_id."')";
   $result=$conn->query($sql);
   if ($result->num_rows>0) {
     while ($row=$result->fetch_assoc()) {
       $notesheet_id=$row["id"];
       $notesheet_number=$row["number"];
-      $letter_no=$row["letter_no"];
-      $sender=$row["sender"];
-      $dgp_no=$row["dgp_office_no"];
-      $letter_date=$row["letter_date"];
+      $date=$row["date_created"];
       $subject=$row["subject"];
-      $description=$row["description"];
-      $file_type=$row["file_type"];
-      $file_loc=$row["file_loc"];
-    }
-  }
-  else {
-
-  }
-  $transaction_check_sql="SELECT t.*, u.user_name  from transactions t inner join user u on u.user_id=t.sender_id where t.id=".$transaction_id;
-  $result=$conn->query($transaction_check_sql);
-  if ($result->num_rows>0) {
-    while ($row=$result->fetch_assoc()) {
-      $forwarded_by=$row["user_name"];
-      $sender_id=$row["sender_id"];
       $remark=$row["remark"];
-      $mail_type=$row["type"];
-      $dispatch_time=$row["dispatch_time"];
+      $creator_name=$row["creator_name"];
+      $file_id=$row["file_id"];
+      $ns_loc=$row["ns_loc"];
     }
   }
   else {
 
   }
-
 }
 else {
   header('location: index.php');
@@ -56,7 +39,7 @@ else {
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>File Tracking System | File Info</title>
+  <title>File Tracking System | Notesheet Info</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimal-ui" />
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -119,7 +102,7 @@ else {
                 <a data-toggle="modal" data-target="#aside" class="navbar-item pull-left hidden-lg-up p-r m-a-0">
                   <i class="ion-navicon"></i>
                 </a>
-                <div class="navbar-item pull-left h5" id="pageTitle">Inbox</div>
+                <div class="navbar-item pull-left h5" id="pageTitle">Notesheet Info</div>
                 <!-- nabar right -->
                 <ul class="nav navbar-nav pull-right">
                   <li class="nav-item dropdown pos-stc-xs">
@@ -186,29 +169,17 @@ else {
 <div class="padding">
   <div class="box">
     <div class="box-header">
-      <h2><Strong>Subject:</strong> <?php echo $subject ?></h2><BR>
+      <h2>Notesheet Info</h2><BR>
       <div class="row">
         <div class="col-sm-6">
-          <strong>File ID: </strong><?php echo $file_id; ?><br>
-          <Strong>Sender: </strong><?php echo $sender; ?><br>
+          <strong>Notesheet ID: </strong><?php echo $notesheet_id; ?><br>
+          <Strong>Created by: </strong><?php echo $creator_name; ?><br>
         </div>
         <div class="col-sm-6" style="text-align:right;">
-          <Strong>Date: </strong><?php echo $letter_date; ?><br>
-          <strong>File Number: </strong><?php echo $file_no; ?> | <Strong>Letter Number: </strong> <?php echo $letter_no ?>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-sm-6">
-          <strong>Forwarded from: </strong><?php echo $forwarded_by; ?> at <?php echo $dispatch_time; ?><br>
-          <Strong>DGP Office number: </strong><?php echo $dgp_no; ?>
+          <Strong>Date: </strong><?php echo $date; ?><br>
+          <strong>Notesheet Number: </strong><?php echo $notesheet_number; ?>
         </div>
       </div><br>
-      <div class="row">
-        <div class="col-sm-12">
-          <strong>Description: </strong><br><?php echo $description; ?>
-        </div>
-      </div>
-      <br>
       <div class="row">
         <div class="col-sm-12">
           <strong>Remark: </strong><br><?php echo $remark; ?>
@@ -217,30 +188,28 @@ else {
       <br>
       <div class="row">
         <div class="col-sm-12">
-          <strong>Linked notesheets:</strong><br>
+          <strong>Linked Files:</strong><br>
           <table class="table table-bordered table-hover">
             <thead>
               <th>ID</th>
-              <th>Notesheet Number</th>
-              <th>Created by</th>
-              <th>Remark</th>
-              <th>Date  Created</th>
+              <th>File Number</th>
+              <th>Subject</th>
+              <th>Type</th>
             </thead>
             <tbody class="table-hover table-striped">
               <?php
-              $sql="SELECT n.*, u.user_name from notesheet n inner join user u on u.user_id=n.created_by where n.file_id=".$file_id;
+              $sql="SELECT * from files where id='".$file_id."'";
               $result=$conn->query($sql);
               if ($result->num_rows>0) {
                 while ($row=$result->fetch_assoc()) {
                   echo "<td>".$row["id"]."</td>";
-                  echo "<td>".$row["number"]."</td>";
-                  echo "<td>".$row["user_name"]."</td>";
-                  echo "<td>".$row["remark"]."</td>";
-                  echo "<td>".$row["date_created"]."</td>";
+                  echo "<td>".$row["file_no"]."</td>";
+                  echo "<td>".$row["subject"]."</td>";
+                  echo "<td>".$row["file_type"]."</td>";
                 }
               }
               else {
-                echo "<td colspan='5' style='text-align:center;'>No notesheet linked yet</td>";
+                echo "<td colspan='4' style='text-align:center;'>No notesheet linked Files yet</td>";
               }
               ?>
             </tbody>
@@ -254,25 +223,25 @@ else {
           <button type="button" class="btn default" data-toggle="modal" data-target="#forward" data-ui-toggle-class="zoom" data-ui-target="#animate">Forward</button>
           <button type="button" class="btn default" data-toggle="modal" data-target="#reply" data-ui-toggle-class="zoom" data-ui-target="#animate">Reply</button>
           <button type="button" class="btn default" onclick="window.location.assign(\'trace_file.php?file_id='.$file_id.' \');">Trace File</button>&nbsp;';
-          if($file_loc=="")
+          if($ns_loc=="")
           {
             echo '<button type="button" class="btn default" >No Attachments</button>';
           }
           else{
-            $quoted_file_loc="'file/".$file_loc."'";
+            $quoted_file_loc="'file/".$ns_loc."'";
             echo '<button type="button" class="btn default" onclick="window.location.assign('.$quoted_file_loc.');">See Attachment</button>
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#close" data-ui-toggle-class="zoom" data-ui-target="#animate">Close File</button>';
           }
         }
         else if($process_id==1) {
-          if($file_loc=="")
+          if($ns_loc=="")
           {
-            echo '<button type="button" class="btn default" onclick="window.location.assign(\'trace_file.php?file_id='.$file_id.' \');">Trace File</button>&nbsp;
+            echo '<button type="button" class="btn default" onclick="window.location.assign(\'trace_file.php?file_id='.$file_id.' \');">Trace Notesheet</button>&nbsp;
             <button type="button" class="btn default" >No Attachments</button>';
           }
           else{
-            $quoted_file_loc="'file/".$file_loc."'";
-            echo '<button type="button" class="btn default" onclick="window.location.assign(\'trace_file.php?file_id='.$file_id.' \');">Trace File</button>&nbsp;
+            $quoted_file_loc="'notesheet/".$ns_loc."'";
+            echo '<button type="button" class="btn default" onclick="window.location.assign(\'trace_file.php?file_id='.$file_id.' \');">Trace Notesheet</button>&nbsp;
             <button type="button" class="btn default" onclick="window.location.assign('.$quoted_file_loc.');">See Attachment</button>';
           }
         }

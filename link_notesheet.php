@@ -13,7 +13,7 @@ else {
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>File Tracking System | Sent Notesheets</title>
+  <title>File Tracking System | Search Notesheet</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimal-ui" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
@@ -75,7 +75,7 @@ else {
                 <a data-toggle="modal" data-target="#aside" class="navbar-item pull-left hidden-lg-up p-r m-a-0">
                   <i class="ion-navicon"></i>
                 </a>
-                <div class="navbar-item pull-left h5" id="pageTitle">Sent Notesheets</div>
+                <div class="navbar-item pull-left h5" id="pageTitle">Search File</div>
                 <!-- nabar right -->
                 <ul class="nav navbar-nav pull-right">
                   <li class="nav-item dropdown pos-stc-xs">
@@ -142,11 +142,11 @@ else {
 <div class="padding">
   <div class="box">
     <div class="box-header">
-      <h2>Sent Files</h2>
+      <h2>All Files</h2>
     </div>
     <div class="table-responsive" id="datatable">
       <table data-ui-jp="dataTable" data-ui-options="{
-          sAjaxSource: 'api/notesheet_sent.php',
+          sAjaxSource: 'api/unlinked_notesheets.php',
           paging: false,
           lengthChange: false,
           buttons: [ 'copy', 'excel', 'pdf', 'colvis' ],
@@ -154,9 +154,8 @@ else {
             { mData: 'id' },
             { mData: 'number' },
             { mData: 'subject' },
-            { mData: 'user_name' },
-            { mData: 'dispatch_time' },
-            { mData: 'status' }
+            { mData: 'date_created' },
+            { mData: 'user_name' }
           ],
           'initComplete': function () {
             this.api().buttons().container()
@@ -172,10 +171,9 @@ else {
           <tr>
             <th  style="width:5%">ID</th>
             <th  style="width:10%">Notesheet Number</th>
-            <th  style="width:30%">Subject</th>
-            <th  style="width:15%">Sent to</th>
-            <th  style="width:15%">Dispatch Time</th>
-            <th  style="width:5%">Status</th>
+            <th  style="width:10%">Subject</th>
+            <th  style="width:10%">Date</th>
+            <th  style="width:15%">Creator</th>
           </tr>
         </thead>
         <tbody>

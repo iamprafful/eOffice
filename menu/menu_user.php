@@ -68,7 +68,7 @@ $nav='<nav class="scroll nav-stacked nav-stacked-rounded nav-color">
       </a>
     </li>
     <li>
-      <a href="sent_notesheet.php" class="b-default">
+      <a href="sent_notesheets.php" class="b-default">
         <span class="nav-icon text-white no-fade">
           <i class="ion-ios-paperplane"></i>
         </span>
